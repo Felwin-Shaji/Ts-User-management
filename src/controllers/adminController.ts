@@ -2,17 +2,18 @@ import { Request,Response,NextFunction } from "express";
 import userModel from "../models/userModel";
 import bcrypt from "bcrypt";
 import { promises } from "dns";
+//import { promises } from "dns";
 
 
-const securePassword = async (password:string) => {
-    try {
-        const passHash = await bcrypt.hash(password,10)
-        return passHash
-    } catch (error) {
-        console.log(error);
+// const securePassword = async (password:string) => {
+//     try {
+//         const passHash = await bcrypt.hash(password,10)
+//         return passHash
+//     } catch (error) {
+//         console.log(error);
         
-    }
-}
+//     }
+// }
 const loadLogin = async (req:Request,res:Response) => {
     try {
         return res.render('adminLogin')
@@ -53,15 +54,15 @@ const login = async (req: Request, res: Response):Promise<void> => {
 
 const loadDashboard = async (req: Request, res: Response): Promise<void> => {
     try {
-      const admin = req.session.user; // assuming admin is stored in session
+      const admin = req.session.user; 
   
       if (!admin) {
-        res.redirect('/admin/login'); // if not logged in, redirect
+        res.redirect('/admin/login'); 
         return;
       }
 
       const adminData = await userModel.find({isAdmin:true}) 
-      //console.log(adminData) 
+       
       const users = await userModel.find({ isAdmin: false }); 
       console.log(users)
   
@@ -87,7 +88,7 @@ const loadDashboard = async (req: Request, res: Response): Promise<void> => {
         return;
       }
   
-      // Toggle the isBlocked status
+      
       user.isBlocked = !user.isBlocked;
       await user.save();
   
@@ -150,6 +151,50 @@ const loadDashboard = async (req: Request, res: Response): Promise<void> => {
         res.redirect('/admin');
       }
   }
+
+  const getCreatUser = async(req:Request,res:Response):Promise<void> =>{
+    try {
+      res.render("creatUser")
+    } catch (error) {
+      
+    }
+  }
+
+  const creatUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { name, email, phone, password } = req.body;
+  
+      if (!name || !email || !phone || !password) {
+        res.status(400).json({ message: "All fields are required." });
+        return;
+      }
+  
+      const existingUser = await userModel.findOne({ email });
+      if (existingUser) {
+        res.status(409).json({ message: "User with this email already exists." });
+        return;
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      const newUser = new userModel({
+        name,
+        email,
+        phone,
+        password: hashedPassword,
+        isAdmin: false,
+        isBlocked: false
+      });
+  
+      await newUser.save();
+  
+      res.status(201).json({ message: "User created successfully." });
+    } catch (error) {
+      console.error("Error creating user:", error);
+      res.status(500).json({ message: "Internal server error." });
+    }
+  };
+  
   
 
 export default {
@@ -159,5 +204,7 @@ export default {
     blockUser,
     logout,
     getEditUser,
-    postEditUser
+    postEditUser,
+    getCreatUser,
+    creatUser
 }

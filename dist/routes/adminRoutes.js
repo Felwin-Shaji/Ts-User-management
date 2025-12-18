@@ -14,4 +14,6 @@ router.post("/block-user/:id", auth_1.default.adminAuth, adminController_1.defau
 router.post("/logout", auth_1.default.adminAuth, adminController_1.default.logout);
 router.get('/edit-user/:id', auth_1.default.adminAuth, adminController_1.default.getEditUser);
 router.post('/edit-user/:id', auth_1.default.adminAuth, adminController_1.default.postEditUser);
+router.get("/create-user", auth_1.default.adminAuth, adminController_1.default.getCreatUser);
+router.post("/create-user", auth_1.default.adminAuth, adminController_1.default.creatUser);
 exports.default = router;

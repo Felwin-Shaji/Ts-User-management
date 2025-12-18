@@ -14,15 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const userModel_1 = __importDefault(require("../models/userModel"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const securePassword = (password) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const passHash = yield bcrypt_1.default.hash(password, 10);
-        return passHash;
-    }
-    catch (error) {
-        console.log(error);
-    }
-});
+//import { promises } from "dns";
+// const securePassword = async (password:string) => {
+//     try {
+//         const passHash = await bcrypt.hash(password,10)
+//         return passHash
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
 const loadLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         return res.render('adminLogin');
@@ -61,13 +61,12 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const loadDashboard = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const admin = req.session.user; // assuming admin is stored in session
+        const admin = req.session.user;
         if (!admin) {
-            res.redirect('/admin/login'); // if not logged in, redirect
+            res.redirect('/admin/login');
             return;
         }
         const adminData = yield userModel_1.default.find({ isAdmin: true });
-        //console.log(adminData) 
         const users = yield userModel_1.default.find({ isAdmin: false });
         console.log(users);
         res.render('dashboard', { admin: adminData[0], users });
@@ -87,7 +86,6 @@ const blockUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.redirect('/admin');
             return;
         }
-        // Toggle the isBlocked status
         user.isBlocked = !user.isBlocked;
         yield user.save();
         console.log(`User ${userId} is now ${user.isBlocked ? 'Blocked' : 'Unblocked'}`);
@@ -144,6 +142,42 @@ const postEditUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.redirect('/admin');
     }
 });
+const getCreatUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        res.render("creatUser");
+    }
+    catch (error) {
+    }
+});
+const creatUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { name, email, phone, password } = req.body;
+        if (!name || !email || !phone || !password) {
+            res.status(400).json({ message: "All fields are required." });
+            return;
+        }
+        const existingUser = yield userModel_1.default.findOne({ email });
+        if (existingUser) {
+            res.status(409).json({ message: "User with this email already exists." });
+            return;
+        }
+        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+        const newUser = new userModel_1.default({
+            name,
+            email,
+            phone,
+            password: hashedPassword,
+            isAdmin: false,
+            isBlocked: false
+        });
+        yield newUser.save();
+        res.status(201).json({ message: "User created successfully." });
+    }
+    catch (error) {
+        console.error("Error creating user:", error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+});
 exports.default = {
     loadLogin,
     loadDashboard,
@@ -151,5 +185,7 @@ exports.default = {
     blockUser,
     logout,
     getEditUser,
-    postEditUser
+    postEditUser,
+    getCreatUser,
+    creatUser
 };

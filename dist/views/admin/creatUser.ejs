@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create User</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f3f4f6;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 50px auto;
+      background-color: #ffffff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #111827;
+    }
+
+    form div {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .error {
+      color: #dc2626;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #3b82f6;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Create New User</h2>
+    <form id="userForm" action="/admin/create-user" method="POST" novalidate>
+      <div>
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" />
+        <div class="error" id="nameError"></div>
+      </div>
+
+      <div>
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" />
+        <div class="error" id="emailError"></div>
+      </div>
+
+      <div>
+        <label for="phone">Phone:</label>
+        <input type="text" name="phone" id="phone" />
+        <div class="error" id="phoneError"></div>
+      </div>
+
+      <div>
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" />
+        <div class="error" id="passwordError"></div>
+      </div>
+
+      <button type="submit">Create User</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("userForm");
+  
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+  
+      let isValid = true;
+  
+      // Clear all previous errors
+      ["name", "email", "phone", "password"].forEach(id => {
+        document.getElementById(id + "Error").textContent = "";
+      });
+  
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const phone = form.phone.value.trim();
+      const password = form.password.value.trim();
+  
+      if (name === "") {
+        document.getElementById("nameError").textContent = "Name is required.";
+        isValid = false;
+      }
+  
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (email === "") {
+        document.getElementById("emailError").textContent = "Email is required.";
+        isValid = false;
+      } else if (!emailRegex.test(email)) {
+        document.getElementById("emailError").textContent = "Enter a valid email.";
+        isValid = false;
+      }
+  
+      if (phone === "") {
+        document.getElementById("phoneError").textContent = "Phone is required.";
+        isValid = false;
+      } else if (!/^\d{10}$/.test(phone)) {
+        document.getElementById("phoneError").textContent = "Enter a valid 10-digit phone number.";
+        isValid = false;
+      }
+  
+      if (password.length < 6) {
+        document.getElementById("passwordError").textContent = "Password must be at least 6 characters.";
+        isValid = false;
+      }
+  
+      if (!isValid) return;
+  
+      // Prepare data
+      const formData = {
+        name,
+        email,
+        phone,
+        password
+      };
+  
+      try {
+        const response = await fetch("/admin/create-user", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData)
+        });
+  
+        const result = await response.json();
+  
+        if (response.ok) {
+          alert(result.message || "User created successfully!");
+          window.location.href = "/admin";
+        } else {
+          alert(result.message || "Something went wrong.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error occurred while submitting the form.");
+      }
+    });
+  </script>
+  
+</body>
+</html>

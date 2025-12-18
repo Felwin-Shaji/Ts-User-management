@@ -118,6 +118,7 @@ const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 res.status(500).send("An error occurred while logging out.");
                 return;
             }
+            res.clearCookie('connect.sid');
             res.redirect("/login");
         });
     }
@@ -135,16 +136,16 @@ const home = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 res.render('home', { user: userData });
             }
             else {
-                res.redirect('/');
+                res.redirect('/login');
             }
         }
         else {
-            res.redirect('/');
+            res.redirect('/login');
         }
     }
     catch (error) {
         console.log(error);
-        res.redirect('/');
+        res.redirect('/login');
     }
 });
 const getEdit = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

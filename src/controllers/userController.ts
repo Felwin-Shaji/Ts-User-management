@@ -118,6 +118,7 @@ const logout = async (req: Request, res: Response): Promise<void> => {
                 res.status(500).send("An error occurred while logging out.");
                 return;
             }
+            res.clearCookie('connect.sid'); 
             res.redirect("/login");
         });
     } catch (error) {
@@ -134,14 +135,14 @@ const home = async (req:Request,res:Response)=>{
           if (userData) {
             res.render('home', { user: userData });
           } else {
-            res.redirect('/');
+            res.redirect('/login');
           }
         } else {
-          res.redirect('/');
+          res.redirect('/login');
         }
       } catch (error) {
         console.log(error);
-        res.redirect('/');
+        res.redirect('/login');
       }
 }
 

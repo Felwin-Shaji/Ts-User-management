@@ -90,6 +90,9 @@
     <div class="admin-details">
       Welcome, <%= admin.name %> (<%= admin.email %>)
     </div>
+    <a href="/admin/create-user">
+      <button type="button" class="logout-btn" style="background-color: #2ecc71;">Create User</button>
+    </a>
     <form action="/admin/logout" method="POST">
       <button type="submit" class="logout-btn">Logout</button>
     </form>

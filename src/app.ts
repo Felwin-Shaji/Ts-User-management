@@ -40,14 +40,14 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
   });
 
-  app.use('/public', express.static(path.join(__dirname, '../public'), {
-    setHeaders: (res, path) => {
-      res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-      res.set("Pragma", "no-cache");
-      res.set("Expires", "0");
-      res.set("Surrogate-Control", "no-store");
-    },
-  }));
+  // app.use('/public', express.static(path.join(__dirname, '../public'), {
+  //   setHeaders: (res, path) => {
+  //     res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  //     res.set("Pragma", "no-cache");
+  //     res.set("Expires", "0");
+  //     res.set("Surrogate-Control", "no-store");
+  //   },
+  // }));
 
   app.use("/",user);
   app.use("/admin",admin)

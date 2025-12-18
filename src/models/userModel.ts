@@ -5,8 +5,8 @@ export interface user extends mongoose.Document{
     email:string;
     password: string;
     phone: string;
-    isAdmin:Boolean;
-    isBlocked:Boolean;
+    isAdmin:boolean;
+    isBlocked:boolean ;
 }
 
 const userSchema = new mongoose.Schema<user>({

@@ -33,14 +33,14 @@ app.use((req, res, next) => {
     res.set("Surrogate-Control", "no-store");
     next();
 });
-app.use('/public', express_1.default.static(path_1.default.join(__dirname, '../public'), {
-    setHeaders: (res, path) => {
-        res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-        res.set("Pragma", "no-cache");
-        res.set("Expires", "0");
-        res.set("Surrogate-Control", "no-store");
-    },
-}));
+// app.use('/public', express.static(path.join(__dirname, '../public'), {
+//   setHeaders: (res, path) => {
+//     res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+//     res.set("Pragma", "no-cache");
+//     res.set("Expires", "0");
+//     res.set("Surrogate-Control", "no-store");
+//   },
+// }));
 app.use("/", userRoutes_1.default);
 app.use("/admin", adminRoutes_1.default);
 //app.use("/admin", admin);

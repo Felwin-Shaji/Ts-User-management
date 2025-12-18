@@ -4,8 +4,8 @@ import { Request,Response,NextFunction } from "express";
 const userAuth = async (req:Request, res:Response, next:NextFunction): Promise<void>=> {
     try {
       if (req.session.user) {
-        const user = await userModel.findOne({_id:req.session.user},{ isAdmin: false });
-  
+        const user = await userModel.findOne({ _id: req.session.user, isAdmin: false });
+
         if (user) {
           return next();
         } else {

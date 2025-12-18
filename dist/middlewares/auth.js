@@ -16,7 +16,7 @@ const userModel_1 = __importDefault(require("../models/userModel"));
 const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (req.session.user) {
-            const user = yield userModel_1.default.findOne({ _id: req.session.user }, { isAdmin: false });
+            const user = yield userModel_1.default.findOne({ _id: req.session.user, isAdmin: false });
             if (user) {
                 return next();
             }
