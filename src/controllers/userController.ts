@@ -20,8 +20,7 @@ const getSignUp=async (req:Request,res:Response) => {
             return res.redirect("/")
         }
     } catch (error) {
-        console.log(error);
-        
+        console.log(error);   
     }
 }
 
@@ -81,7 +80,6 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
     try {
       const { email, password } = req.body;
       const user = await userModel.findOne({ email });
-      console.log(user)
   
       if (!user) {
         res.json({ success: false, message: 'Email not found!' });
@@ -94,7 +92,6 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
       }
   
       const isPasswordMatch = await bcrypt.compare(password, user.password);
-  
       if (!isPasswordMatch) {
         res.json({ success: false, message: 'Incorrect password!' });
         return;
@@ -104,7 +101,6 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<v
       res.json({ success: true, message: 'Login successful' });
   
     } catch (error) {
-      console.error(error);
       next(error); 
     }
   };
@@ -122,7 +118,6 @@ const logout = async (req: Request, res: Response): Promise<void> => {
             res.redirect("/login");
         });
     } catch (error) {
-        console.error("Error during logout:", error);
         res.status(500).send("An unexpected error occurred.");
     }
 };
@@ -131,7 +126,6 @@ const home = async (req:Request,res:Response)=>{
     try {
         if (req.session.user) {
           const userData = await userModel.findById(req.session.user);
-          console.log("userData:",userData)
           if (userData) {
             res.render('home', { user: userData });
           } else {
@@ -141,7 +135,6 @@ const home = async (req:Request,res:Response)=>{
           res.redirect('/login');
         }
       } catch (error) {
-        console.log(error);
         res.redirect('/login');
       }
 }
@@ -158,7 +151,6 @@ const getEdit = async (req: Request, res: Response):Promise<void> => {
 
     res.render("userEdit", { user,message:"" });
   } catch (error) {
-    console.error(error);
     res.status(500).send("Something went wrong");
   }
 };
@@ -175,7 +167,6 @@ const edit = async (req: Request, res: Response):Promise<void> => {
       return 
     }
 
-    // Update the fields
     user.name = name;
     user.email = email;
     user.phone = phone;
