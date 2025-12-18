@@ -2,18 +2,7 @@ import { Request,Response,NextFunction } from "express";
 import userModel from "../models/userModel";
 import bcrypt from "bcrypt";
 import { promises } from "dns";
-//import { promises } from "dns";
 
-
-// const securePassword = async (password:string) => {
-//     try {
-//         const passHash = await bcrypt.hash(password,10)
-//         return passHash
-//     } catch (error) {
-//         console.log(error);
-        
-//     }
-// }
 const loadLogin = async (req:Request,res:Response) => {
     try {
         return res.render('adminLogin')
